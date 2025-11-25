@@ -55,7 +55,7 @@ def advect_nodes(tri0, u0, v0, max_dist0):
     y1 = y0 + v0
     a1 = get_area(x1, y1, t0)
     if a1.min() < 0:
-        for max_dist in [max_dist0, max_dist0*2, max_dist0*3, max_dist0*4]:
+        for max_dist in [max_dist0, max_dist0*2, max_dist0*3, max_dist0*4, max_dist0*5, max_dist0*6, max_dist0*7, max_dist0*8, max_dist0*9, max_dist0*10]: 
             for max_factor in [0.25, 0.5, 0.75, 0.9, 0.99]:
                 weights = get_distance_weights(x0, y0, t0, a1, max_dist)
                 factor = decrease_speed_factor(weights, max_factor)
@@ -250,7 +250,7 @@ class InterpolateSic:
             t = d['t']
 
         # load SIC
-        file_mask = f'{self.sid_dir}/{mesh_year}/ice_drift_nh_ease*{mesh_date}1200.nc.npz'
+        file_mask = f'{self.sid_dir}/{mesh_year}/ice_drift_sh_ease*{mesh_date}1200.nc.npz'
         try:
             sic_src_file = glob.glob(file_mask)[0]
         except:
