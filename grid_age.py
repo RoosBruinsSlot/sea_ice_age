@@ -16,7 +16,8 @@ class GridAge:
         self.force = force
 
     def __call__(self, age_file):
-        age_grd_file = age_file.replace('.npz', '_grd.npz').replace('/age/', '/age_grd/')
+        age_file = age_file.replace("\\", "/")
+        age_grd_file = age_file.replace('.npz', '_grd.npz').replace('//age//', '//age_grd//')
         unc_file = age_file.replace('/age/', '/unc/').replace('/age_', '/unc_tot_')
         if os.path.exists(age_grd_file) and not self.force:
             return
@@ -41,6 +42,7 @@ class GridAge:
             igi = IrregularGridInterpolator(x, y, self.xgrd, self.ygrd, t)
         except:
             raise ValueError(f'Cannot create IGI {age_file}')
+            return #added to skip this file? 
 
         src_data = np.vstack([a[None], f, unc_age[None], unc_tot[:len(f)]])
         dst_data = []
@@ -91,7 +93,7 @@ class SeaIceAgeDataset(GeoDatasetWrite):
     def set_global_attributes(self, date, monthly=False):
         duration_int = 30 if monthly else 1
         duration_str = 'P1M' if monthly else 'P1D'
-        title = "Arctic Sea Ice Age Climate Data Record v2.1",
+        title = "Weddell Sea, Sea Ice Age Climate Data Record v2.1",
         if monthly: 
             title = f"{title} (monthly)"
         global_attributes = dict(
@@ -100,7 +102,7 @@ class SeaIceAgeDataset(GeoDatasetWrite):
             iso_topic_category = "oceans,climatology,meteorology,atmosphere",
             keywords = "GCMDSK:Earth Science > Cryosphere > Sea Ice > Sea Ice Concentration, GCMDSK:Earth Science > Oceans > Sea Ice > Sea Ice Concentration, GCMDSK:Earth Science > Climate Indicators > Cryospheric Indicators > Sea Ice Concentration, GCMDSK:Earth Science > Cryosphere > Sea Ice > Sea Ice Motion, GCMDSK:Earth Science > Oceans > Sea Ice > Sea Ice Motion, GCMDSK:Earth Science > Climate Indicators > Cryospheric Indicators > Sea Ice Motion, GCMDLOC:Geographic Region > Northern Hemisphere, GCMDLOC:Vertical Location > Sea Surface, GCMDPROV: CONSORTIA/INSTITUTIONS > NERSC > Nansen Environmental and Remote Sensing Centre",
             keywords_vocabulary = "GCMDSK:GCMD Science Keywords:https://gcmd.earthdata.nasa.gov/kms/concepts/concept_scheme/sciencekeywords, GCMDPROV:GCMD Providers:https://gcmd.earthdata.nasa.gov/kms/concepts/concept_scheme/providers, GCMDLOC:GCMD Locations:https://gcmd.earthdata.nasa.gov/kms/concepts/concept_scheme/locations",
-            geospatial_lat_max = 90.00,
+            geospatial_lat_max = -90.00,
             geospatial_lat_min = 17.61,
             geospatial_lon_max = 180.00,
             geospatial_lon_min = -180.00,
@@ -198,7 +200,7 @@ class ExportNetcdf:
 
     def set_attributes(self):
         self.time_atts = {}
-        template_file = f'{self.osisaf_sic_dir}/1991/01/ice_conc_nh_ease2-250_cdr-v3p0_199101011200.nc'
+        template_file = f'{self.osisaf_sic_dir}/ice_conc_sh_ease2-250_cdr-v3p1_199101011200.nc'
         with Dataset(template_file) as template_ds:
             self.xc = template_ds['xc'][:] * 1000
             self.yc = template_ds['yc'][:] * 1000
