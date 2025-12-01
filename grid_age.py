@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 import os
 
 from netCDF4 import Dataset
+from scipy.interpolate import griddata
 from geodataset.geodataset import GeoDatasetWrite
 import numpy as np
 import pyproj
@@ -23,7 +24,7 @@ class GridAge:
             return
         try:
             with np.load(age_file) as data:
-                t = data['t']
+                t = data['t'].astype(int)
                 x = data['x']
                 y = data['y']
                 a = data['a']
@@ -41,17 +42,18 @@ class GridAge:
         try:
             igi = IrregularGridInterpolator(x, y, self.xgrd, self.ygrd, t)
         except:
-            raise ValueError(f'Cannot create IGI {age_file}')
-            return #added to skip this file? 
+            print(f'Cannot create IGI {age_file}')
+            igi = None
+            x_el = x[t].mean(axis=1)
+            y_el = y[t].mean(axis=1)
 
         src_data = np.vstack([a[None], f, unc_age[None], unc_tot[:len(f)]])
         dst_data = []
         for d in src_data:
-            try:
+            if igi is not None:
                 dgrd = igi.interp_field(d)
-            except:
-                import ipdb; ipdb.set_trace()
-                raise ValueError(f'Cannot interpolate {age_file}')
+            else:
+                dgrd = griddata((x_el, y_el), d, (self.xgrd, self.ygrd), method='linear')
             dgrd[self.mask == 0] = np.nan
             dst_data.append(dgrd.astype(np.float32))
         
