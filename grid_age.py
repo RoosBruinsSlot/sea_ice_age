@@ -76,7 +76,7 @@ class GridAge:
 class SeaIceAgeDataset(GeoDatasetWrite):
     """ wrapper for netCDF4.Dataset with info about Ice Age products """
     grid_mapping_variable = 'Lambert_Azimuthal_Equal_Area'
-    projection = pyproj.Proj("+proj=laea +lat_0=90 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +type=crs")
+    projection = pyproj.Proj("+proj=laea +lat_0=-90 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +type=crs")
     global_attributes_source = None
     global_attributes_title = None
 
@@ -84,12 +84,12 @@ class SeaIceAgeDataset(GeoDatasetWrite):
         return dict(
             grid_mapping_name = "lambert_azimuthal_equal_area" ,
             longitude_of_projection_origin = 0. ,
-            latitude_of_projection_origin = 90. ,
+            latitude_of_projection_origin = -90. ,
             false_easting = 0. ,
             false_northing = 0. ,
             semi_major_axis = 6378137. ,
             inverse_flattening = 298.257223563 ,
-            proj4_string = "+proj=laea +lat_0=90 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +type=crs" ,
+            proj4_string = "+proj=laea +lat_0=-90 +lon_0=0 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +type=crs" ,
         )
 
     def set_global_attributes(self, date, monthly=False):
@@ -117,7 +117,7 @@ class SeaIceAgeDataset(GeoDatasetWrite):
             time_coverage_end = (date + timedelta(duration_int)).strftime("%Y-%m-%dT00:00:00Z"),
             time_coverage_duration = duration_str,
             time_coverage_resolution = duration_str,
-            project = "Thickness of Arctic sea ice Reconstructed by Data assimilation and artificial Intelligence Seamlessly (TARDIS)",
+            project = "Thickness of Antarctic sea ice Reconstructed by Data assimilation and artificial Intelligence Seamlessly (TARDIS)",
             institution = "Nansen Environmental and Remote Sensing Centre",
             creator_name = "Anton Korosov",
             creator_type = "person",
@@ -136,8 +136,8 @@ class SeaIceAgeDataset(GeoDatasetWrite):
             naming_authority = "NERSC",
             Conventions = "CF-1.7, ACDD-1.3",
             standard_name_vocabulary = "CF Standard Name Table (Version 78, 21 September 2021)",
-            product_name = "nersc_arctic_sea_ice_age_climate_data_record",
-            product_id = "arctic25km_sea_ice_age_v2p1",
+            product_name = "nersc_Weddell_Sea_sea_ice_age_climate_data_record",
+            product_id = "Weddell_Sea_25km_sea_ice_age_v2p1",
             product_version = "2.1",
             product_status = "released",
             dataset_doi = "10.5281/zenodo.15773501",
@@ -281,7 +281,7 @@ class ExportNetcdf:
         age_grd_date = datetime.strptime(os.path.basename(age_grd_file).split('_')[1], '%Y%m%d')
         dst_dir = age_grd_date.strftime(f'{self.dst_root_dir}/%Y')
         os.makedirs(dst_dir, exist_ok=True)
-        dst_file = age_grd_date.strftime(f'{dst_dir}/arctic25km_sea_ice_age_v2p1_%Y%m%d.nc')
+        dst_file = age_grd_date.strftime(f'{dst_dir}/Weddell_Sea_25km_sea_ice_age_v1_%Y%m%d.nc')
         if os.path.exists(dst_file) and not self.force:
             return
 
